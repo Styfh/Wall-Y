@@ -6,4 +6,42 @@
     android:layout_height="match_parent"
     tools:context=".ProfileActivity">
 
+    <View
+        android:id="@+id/bottomBar"
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:background="@drawable/rectangle"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"/>
+
+    <ImageView
+        android:id="@+id/navBtnHome"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:src="@drawable/home"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/navBtnReport"
+        app:layout_constraintTop_toTopOf="@id/bottomBar"
+        app:layout_constraintBottom_toBottomOf="@id/bottomBar" />
+
+    <ImageView
+        android:id="@+id/navBtnReport"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:src="@drawable/monthly_report"
+        app:layout_constraintStart_toEndOf="@id/navBtnHome"
+        app:layout_constraintEnd_toStartOf="@id/navBtnProfile"
+        app:layout_constraintTop_toTopOf="@id/bottomBar"
+        app:layout_constraintBottom_toBottomOf="@id/bottomBar"/>
+
+    <ImageView
+        android:id="@+id/navBtnProfile"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:src="@drawable/profile"
+        app:layout_constraintStart_toEndOf="@id/navBtnReport"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@id/bottomBar"
+        app:layout_constraintBottom_toBottomOf="@id/bottomBar"/>
+
 </androidx.constraintlayout.widget.ConstraintLayout>
