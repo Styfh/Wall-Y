@@ -7,42 +7,16 @@
     tools:context=".MainActivity">
 
 
-    <View
-        android:id="@+id/bottomBar"
+    <com.google.android.material.bottomnavigation.BottomNavigationView
+        android:id="@+id/bottomNav"
         android:layout_width="match_parent"
         android:layout_height="60dp"
-        android:background="@drawable/rectangle"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent"/>
-
-    <ImageView
-        android:id="@+id/navBtnHome"
-        android:layout_width="40dp"
-        android:layout_height="40dp"
-        android:src="@drawable/home"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toStartOf="@id/navBtnReport"
-        app:layout_constraintTop_toTopOf="@id/bottomBar"
-        app:layout_constraintBottom_toBottomOf="@id/bottomBar" />
-
-    <ImageView
-        android:id="@+id/navBtnReport"
-        android:layout_width="40dp"
-        android:layout_height="40dp"
-        android:src="@drawable/monthly_report"
-        app:layout_constraintStart_toEndOf="@id/navBtnHome"
-        app:layout_constraintEnd_toStartOf="@id/navBtnProfile"
-        app:layout_constraintTop_toTopOf="@id/bottomBar"
-        app:layout_constraintBottom_toBottomOf="@id/bottomBar"/>
-
-    <ImageView
-        android:id="@+id/navBtnProfile"
-        android:layout_width="40dp"
-        android:layout_height="40dp"
-        android:src="@drawable/profile"
-        app:layout_constraintStart_toEndOf="@id/navBtnReport"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="@id/bottomBar"
-        app:layout_constraintBottom_toBottomOf="@id/bottomBar"/>
+        android:layout_alignParentBottom="true"
+        app:itemBackground="@color/teal_700"
+        app:itemIconTint="@drawable/navbar"
+        app:itemTextColor="@drawable/navbar"
+        app:menu="@menu/navbar"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
