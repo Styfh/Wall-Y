@@ -1,0 +1,68 @@
+{
+  "project_info": {
+    "project_number": "750229150598",
+    "project_id": "authentication-e1b86",
+    "storage_bucket": "authentication-e1b86.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:750229150598:android:55fe92e6f17cb787556a07",
+        "android_client_info": {
+          "package_name": "com.example.wall_y"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "750229150598-2ak03mb549uanjran5ufjlurrsmbpfnm.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCFYBdvskt6Jv8iZxDUngeB2l12pY9Dxlg"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "750229150598-2ak03mb549uanjran5ufjlurrsmbpfnm.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:750229150598:android:5d0a06071fdc158f556a07",
+        "android_client_info": {
+          "package_name": "id.ac.binus.projectwall_y"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "750229150598-2ak03mb549uanjran5ufjlurrsmbpfnm.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCFYBdvskt6Jv8iZxDUngeB2l12pY9Dxlg"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "750229150598-2ak03mb549uanjran5ufjlurrsmbpfnm.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
