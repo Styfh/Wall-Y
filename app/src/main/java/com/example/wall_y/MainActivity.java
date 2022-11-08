@@ -2,18 +2,26 @@ package com.example.wall_y;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.MenuItem;
+import android.widget.TextView;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.navigation.NavigationBarView;
 
+import java.time.LocalDate;
+
 public class MainActivity extends AppCompatActivity {
 
     final String D_TAG = "MAIN";
+
+    private TextView monthYearText;
+    private RecyclerView calendarRecyclerView;
+    private LocalDate selectedDate;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,5 +55,10 @@ public class MainActivity extends AppCompatActivity {
 
             }
         });
+
+        initWidgets();
+    }
+
+    private void initWidgets() {
     }
 }

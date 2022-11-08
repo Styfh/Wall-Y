@@ -1,3 +1,9 @@
 <resources>
     <string name="app_name">Wall-Y</string>
+
+    <string name="balance_colon">Balance:</string>
+    <string name="home">Home</string>
+    <string name="balance">Rp. </string>
+    <string name="month">January</string>
+    <string name="year">2022</string>
 </resources>
