@@ -8,13 +8,18 @@ import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Debug;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ArrayAdapter;
+import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.Spinner;
+import android.widget.Toast;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.navigation.NavigationBarView;
@@ -30,7 +35,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        // NAVBAR
+        // NAVBAR LOGIC
 
         BottomNavigationView bottomNav = findViewById(R.id.bottomNav);
         bottomNav.setSelectedItemId(R.id.navBtnHome);
@@ -61,7 +66,24 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    public void showAddEventDialog(View view){
+    public void handleAddEventRequest(View view){
+
+        // VALIDATE THAT EVENT NAME IS ENTERED BEFORE SHOWING DIALOG
+
+        EditText eventNameField = findViewById(R.id.eventName);
+        String eventName = eventNameField.getText().toString();
+
+        if(eventName.isEmpty()){
+            Toast.makeText(getApplicationContext(), "Please enter the name of the event first", Toast.LENGTH_LONG).show();
+        } else{
+            showAddEventDialog(eventName);
+        }
+
+    }
+
+    public void showAddEventDialog(String eventName){
+
+        // DIALOG INITIALIZATION
 
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         LayoutInflater inflater = this.getLayoutInflater();
@@ -70,6 +92,8 @@ public class MainActivity extends AppCompatActivity {
 
         builder.setView(dialogView);
         AlertDialog alertDialog = builder.create();
+
+        // SPINNER INITIALIZATION
 
         Spinner balanceOption = dialogView.findViewById(R.id.balanceOption);
         Spinner repeatOption = dialogView.findViewById(R.id.repeatEvent);
@@ -87,6 +111,8 @@ public class MainActivity extends AppCompatActivity {
         balanceOption.setAdapter(balanceOptionAdapter);
         repeatOption.setAdapter(repeatOptionAdapter);
 
+        // ADD BTN INITIALIZATION
+
         ImageButton addButton = dialogView.findViewById(R.id.dialogAddBtn);
 
         addButton.setOnClickListener(new View.OnClickListener() {
@@ -97,6 +123,8 @@ public class MainActivity extends AppCompatActivity {
                 alertDialog.dismiss();
             }
         });
+
+        // SHOW DIALOG
 
         alertDialog.show();
 
