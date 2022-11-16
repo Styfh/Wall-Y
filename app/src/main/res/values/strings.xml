@@ -1,3 +1,19 @@
 <resources>
     <string name="app_name">Wall-Y</string>
+    <string name="RP">RP</string>
+
+    <string-array name="repeat_option">
+        <item>one-time</item>
+        <item>weekly</item>
+        <item>monthly</item>
+        <item>annual</item>
+    </string-array>
+
+    <string-array name="balance_option">
+        <item>Add balance</item>
+        <item>Deduct balance</item>
+    </string-array>
+
+    <string name="add">Add</string>
+    <string name="cancel">Cancel</string>
 </resources>
