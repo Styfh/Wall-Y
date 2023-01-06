@@ -7,6 +7,7 @@ import androidx.fragment.app.DialogFragment;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.nfc.Tag;
 import android.os.Bundle;
 import android.os.Debug;
 import android.text.Editable;
@@ -16,24 +17,55 @@ import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ArrayAdapter;
+import android.widget.CalendarView;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.Spinner;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.navigation.NavigationBarView;
+import com.google.android.material.tabs.TabLayout;
 
 import java.lang.reflect.Array;
+import java.util.Calendar;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements CalendarDialog.CalendarDialogListener {
 
     final String D_TAG = "MAIN";
+    private CalendarView calView;
+    private TextView calEventPlaceholder;
+    public String date;
+    public int day = 0;
+    public int month = 0;
+    public int year = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        // CALENDAR
+        calView = (CalendarView) findViewById(R.id.calendarView);
+        calEventPlaceholder = findViewById(R.id.calendarEventPlaceholder);
+
+        calView.setOnDateChangeListener(new CalendarView.OnDateChangeListener() {
+            @Override
+            public void onSelectedDayChange(@NonNull CalendarView calendarView, int i, int i1, int i2) {
+                //date = i + "/" + (i1+1) + "/" + i2;
+                //Log.d(D_TAG, "date: " + date);
+                day = i2;
+                month = i1+1;
+                year = i;
+                date = day + "/" + month + "/" + year;
+
+                CalendarDialog calendarDialog = new CalendarDialog(day, month, year);
+                calendarDialog.show(getSupportFragmentManager(), "create calendar dialog");
+
+            }
+
+        });
 
         // NAVBAR LOGIC
 
@@ -130,4 +162,8 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
+    @Override
+    public void applyText(String reminder) {
+        calEventPlaceholder.setText(date + " " + reminder);
+    }
 }
