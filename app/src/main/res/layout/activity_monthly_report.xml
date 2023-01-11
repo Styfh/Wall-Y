@@ -18,4 +18,43 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"/>
 
+    <Button
+        android:id="@+id/month"
+        android:layout_width="300px"
+        android:layout_height="40dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginRight="10dp"
+        app:layout_constraintEnd_toStartOf="@id/year"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:text="Month" />
+    <Button
+        android:id="@+id/year"
+        android:layout_width="300px"
+        android:layout_height="40dp"
+        android:layout_marginTop="10dp"
+        android:layout_margin="10dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:text="Month" />
+    <Button
+        android:id="@+id/sortBy"
+        android:layout_width="300px"
+        android:layout_height="40dp"
+        android:layout_marginTop="10dp"
+        android:layout_margin="10dp"
+        app:layout_constraintStart_toEndOf="@id/year"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:text="Month" />
+    <ListView
+        android:id="@+id/listTransaction"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="60dp"
+        android:layout_marginBottom="60dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>

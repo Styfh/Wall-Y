@@ -7,13 +7,23 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ListView;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.navigation.NavigationBarView;
 
+import java.util.Date;
+
 public class MonthlyReportActivity extends AppCompatActivity {
 
     final String D_TAG = "REPORT";
+    private Date date[] = {new Date(2022, 10, 17), new Date(2022, 9, 10), new Date(2022, 8, 1)};
+    private int amount[] = {100000, 50000, 30000};
+    private String text[] = {"Allowance from parents", "Shopping from online shop", "Dinner at the mall"};
+
+    ListView listView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,5 +57,23 @@ public class MonthlyReportActivity extends AppCompatActivity {
 
             }
         });
+
+        listView = findViewById(R.id.listTransaction);
+        TransactionAdapter transactionAdapter = new TransactionAdapter(getApplicationContext(), date, amount, text);
+        listView.setAdapter(transactionAdapter);
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+//                Intent intent = new Intent(MonthlyReportActivity.this, .class);
+//                intent.putExtra("image", foodImage[i]);
+//                intent.putExtra("text", foodData[i]);
+//                intent.putExtra("price", foodPrice[i]);
+
+//                intent.putExtra("itemsBoughtList", itemsBoughtList);
+
+//                startActivity(intent);
+            }
+        });
+
     }
 }
