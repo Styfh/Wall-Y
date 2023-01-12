@@ -24,15 +24,21 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.navigation.NavigationBarView;
 import com.google.android.material.tabs.TabLayout;
+import com.google.firebase.Timestamp;
+import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.lang.reflect.Array;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 public class MainActivity extends AppCompatActivity implements CalendarDialog.CalendarDialogListener {
 
@@ -113,6 +119,32 @@ public class MainActivity extends AppCompatActivity implements CalendarDialog.Ca
 
     }
 
+    private void pushEvent(Event event){
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+
+        Map<String, Object> newEvent = new HashMap<>();
+        newEvent.put("name", event.getEventName());
+        newEvent.put("date", new Timestamp(event.getEventDate()));
+        newEvent.put("isDeduct", event.isDeduct());
+        newEvent.put("repeat", event.getRepeat());
+
+        db.collection("events").document()
+                .set(newEvent)
+                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void unused) {
+                        Toast.makeText(getApplicationContext(), "Event added successfully", Toast.LENGTH_LONG);
+                        Log.d(D_TAG, event.toString());
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Toast.makeText(getApplicationContext(), "Failed to add event", Toast.LENGTH_LONG);
+                    }
+                });
+
+    }
 
     public void showAddEventDialog(String eventName){
 
@@ -187,9 +219,9 @@ public class MainActivity extends AppCompatActivity implements CalendarDialog.Ca
                 else if(frequency.equals("annual"))
                     repeat = 3;
 
+                // Add event
                 Event event = new Event(eventDate, eventName, isDeduct, repeat);
-
-                Log.d(D_TAG, event.toString());
+                pushEvent(event);
 
                 alertDialog.dismiss();
             }
