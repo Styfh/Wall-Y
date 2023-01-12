@@ -29,7 +29,10 @@ import com.google.android.material.navigation.NavigationBarView;
 import com.google.android.material.tabs.TabLayout;
 
 import java.lang.reflect.Array;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Date;
 
 public class MainActivity extends AppCompatActivity implements CalendarDialog.CalendarDialogListener {
 
@@ -59,9 +62,6 @@ public class MainActivity extends AppCompatActivity implements CalendarDialog.Ca
                 month = i1+1;
                 year = i;
                 date = day + "/" + month + "/" + year;
-
-                CalendarDialog calendarDialog = new CalendarDialog(day, month, year);
-                calendarDialog.show(getSupportFragmentManager(), "create calendar dialog");
 
             }
 
@@ -113,6 +113,7 @@ public class MainActivity extends AppCompatActivity implements CalendarDialog.Ca
 
     }
 
+
     public void showAddEventDialog(String eventName){
 
         // DIALOG INITIALIZATION
@@ -151,6 +152,44 @@ public class MainActivity extends AppCompatActivity implements CalendarDialog.Ca
             @Override
             public void onClick(View view) {
                 // ADD EVENT
+
+                Date eventDate = new Date();
+                String eventName = "";
+                boolean isDeduct = false;
+                int repeat = -1;
+
+                // getting fields
+                EditText nameField = (EditText) findViewById(R.id.eventName);
+
+                // getting value from fields
+                eventName = nameField.getText().toString();
+                String option = balanceOption.getSelectedItem().toString();
+                String frequency = repeatOption.getSelectedItem().toString();
+
+                try {
+                    eventDate = new SimpleDateFormat("dd/mm/yy").parse(date);
+                } catch (ParseException e) {
+                    e.printStackTrace();
+                }
+
+                // Processing option and frequency
+                if(option.equals("Deduct balance"))
+                    isDeduct = true;
+                else
+                    isDeduct = false;
+
+                if(frequency.equals("one-time"))
+                    repeat = 0;
+                else if(frequency.equals("weekly"))
+                    repeat = 1;
+                else if(frequency.equals("monthly"))
+                    repeat = 2;
+                else if(frequency.equals("annual"))
+                    repeat = 3;
+
+                Event event = new Event(eventDate, eventName, isDeduct, repeat);
+
+                Log.d(D_TAG, event.toString());
 
                 alertDialog.dismiss();
             }
