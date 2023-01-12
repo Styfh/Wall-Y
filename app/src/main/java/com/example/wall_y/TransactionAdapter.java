@@ -49,7 +49,7 @@ public class TransactionAdapter extends BaseAdapter {
 
         dateView.setText(date[i].toString());
         textView.setText(text[i]);
-        amountView.setText(amount[i]);
+        amountView.setText(Integer.toString(amount[i]));
 
         return view;
     }

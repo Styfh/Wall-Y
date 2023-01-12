@@ -26,7 +26,8 @@
         android:layout_marginRight="10dp"
         app:layout_constraintEnd_toStartOf="@id/year"
         app:layout_constraintTop_toTopOf="parent"
-        tools:text="Month" />
+        android:text="Month"
+        android:textColor="@color/white"/>
     <Button
         android:id="@+id/year"
         android:layout_width="300px"
@@ -36,7 +37,8 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        tools:text="Month" />
+        android:text="Month"
+        android:textColor="@color/white"/>
     <Button
         android:id="@+id/sortBy"
         android:layout_width="300px"
@@ -45,7 +47,8 @@
         android:layout_margin="10dp"
         app:layout_constraintStart_toEndOf="@id/year"
         app:layout_constraintTop_toTopOf="parent"
-        tools:text="Month" />
+        android:text="Month"
+        android:textColor="@color/white"/>
     <ListView
         android:id="@+id/listTransaction"
         android:layout_width="match_parent"
