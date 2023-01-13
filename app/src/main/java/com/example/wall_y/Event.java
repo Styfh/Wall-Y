@@ -8,14 +8,24 @@ public class Event {
     private Date eventDate;
     private String eventName;
     private boolean isDeduct;
+    private int amount;
     private int repeat; // 0 = one-time, 1 = weekly, 2 = monthly, 3 = annual
 
-    public Event(String userId, Date eventDate, String eventName, boolean isDeduct, int repeat) {
+    public Event(String userId, Date eventDate, String eventName, boolean isDeduct, int amount, int repeat) {
         this.userId = userId;
         this.eventDate = eventDate;
         this.eventName = eventName;
         this.isDeduct = isDeduct;
+        this.amount = amount;
         this.repeat = repeat;
+    }
+
+    public int getAmount() {
+        return amount;
+    }
+
+    public void setAmount(int amount) {
+        this.amount = amount;
     }
 
     public String getUserId() {

@@ -129,6 +129,7 @@ public class MainActivity extends AppCompatActivity implements CalendarDialog.Ca
         newEvent.put("name", event.getEventName());
         newEvent.put("date", new Timestamp(event.getEventDate()));
         newEvent.put("isDeduct", event.isDeduct());
+        newEvent.put("amount", event.getAmount());
         newEvent.put("repeat", event.getRepeat());
 
         db.collection("events").document()
@@ -179,6 +180,10 @@ public class MainActivity extends AppCompatActivity implements CalendarDialog.Ca
         balanceOption.setAdapter(balanceOptionAdapter);
         repeatOption.setAdapter(repeatOptionAdapter);
 
+        // AMOUNT INITIALIZATION
+
+        EditText amountField = (EditText) dialogView.findViewById(R.id.amount);
+
         // ADD BTN INITIALIZATION
 
         ImageButton addButton = dialogView.findViewById(R.id.dialogAddBtn);
@@ -191,15 +196,18 @@ public class MainActivity extends AppCompatActivity implements CalendarDialog.Ca
                 Date eventDate = new Date();
                 String eventName = "";
                 boolean isDeduct = false;
+                int amount = -1;
                 int repeat = -1;
 
                 // getting fields
                 FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
                 EditText nameField = (EditText) findViewById(R.id.eventName);
 
+
                 // getting value from fields
                 userId = user.getUid();
                 eventName = nameField.getText().toString();
+                amount = Integer.parseInt(amountField.getText().toString());
                 String option = balanceOption.getSelectedItem().toString();
                 String frequency = repeatOption.getSelectedItem().toString();
 
@@ -225,7 +233,7 @@ public class MainActivity extends AppCompatActivity implements CalendarDialog.Ca
                     repeat = 3;
 
                 // Add event
-                Event event = new Event(userId, eventDate, eventName, isDeduct, repeat);
+                Event event = new Event(userId, eventDate, eventName, isDeduct, amount, repeat);
                 pushEvent(event);
 
                 alertDialog.dismiss();
