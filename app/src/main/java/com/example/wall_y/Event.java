@@ -4,16 +4,26 @@ import java.util.Date;
 
 public class Event {
 
+    private String userId;
     private Date eventDate;
     private String eventName;
     private boolean isDeduct;
     private int repeat; // 0 = one-time, 1 = weekly, 2 = monthly, 3 = annual
 
-    public Event(Date eventDate, String eventName, boolean isDeduct, int repeat) {
+    public Event(String userId, Date eventDate, String eventName, boolean isDeduct, int repeat) {
+        this.userId = userId;
         this.eventDate = eventDate;
         this.eventName = eventName;
         this.isDeduct = isDeduct;
         this.repeat = repeat;
+    }
+
+    public String getUserId() {
+        return userId;
+    }
+
+    public void setUserId(String userId) {
+        this.userId = userId;
     }
 
     public Date getEventDate() {
