@@ -24,12 +24,21 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.navigation.NavigationBarView;
 import com.google.android.material.tabs.TabLayout;
+import com.google.firebase.Timestamp;
+import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.lang.reflect.Array;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 public class MainActivity extends AppCompatActivity implements CalendarDialog.CalendarDialogListener {
 
@@ -59,9 +68,6 @@ public class MainActivity extends AppCompatActivity implements CalendarDialog.Ca
                 month = i1+1;
                 year = i;
                 date = day + "/" + month + "/" + year;
-
-                CalendarDialog calendarDialog = new CalendarDialog(day, month, year);
-                calendarDialog.show(getSupportFragmentManager(), "create calendar dialog");
 
             }
 
@@ -113,6 +119,33 @@ public class MainActivity extends AppCompatActivity implements CalendarDialog.Ca
 
     }
 
+    private void pushEvent(Event event){
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+
+        Map<String, Object> newEvent = new HashMap<>();
+        newEvent.put("name", event.getEventName());
+        newEvent.put("date", new Timestamp(event.getEventDate()));
+        newEvent.put("isDeduct", event.isDeduct());
+        newEvent.put("repeat", event.getRepeat());
+
+        db.collection("events").document()
+                .set(newEvent)
+                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void unused) {
+                        Toast.makeText(getApplicationContext(), "Event added successfully", Toast.LENGTH_LONG);
+                        Log.d(D_TAG, event.toString());
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Toast.makeText(getApplicationContext(), "Failed to add event", Toast.LENGTH_LONG);
+                    }
+                });
+
+    }
+
     public void showAddEventDialog(String eventName){
 
         // DIALOG INITIALIZATION
@@ -151,6 +184,44 @@ public class MainActivity extends AppCompatActivity implements CalendarDialog.Ca
             @Override
             public void onClick(View view) {
                 // ADD EVENT
+
+                Date eventDate = new Date();
+                String eventName = "";
+                boolean isDeduct = false;
+                int repeat = -1;
+
+                // getting fields
+                EditText nameField = (EditText) findViewById(R.id.eventName);
+
+                // getting value from fields
+                eventName = nameField.getText().toString();
+                String option = balanceOption.getSelectedItem().toString();
+                String frequency = repeatOption.getSelectedItem().toString();
+
+                try {
+                    eventDate = new SimpleDateFormat("dd/mm/yy").parse(date);
+                } catch (ParseException e) {
+                    e.printStackTrace();
+                }
+
+                // Processing option and frequency
+                if(option.equals("Deduct balance"))
+                    isDeduct = true;
+                else
+                    isDeduct = false;
+
+                if(frequency.equals("one-time"))
+                    repeat = 0;
+                else if(frequency.equals("weekly"))
+                    repeat = 1;
+                else if(frequency.equals("monthly"))
+                    repeat = 2;
+                else if(frequency.equals("annual"))
+                    repeat = 3;
+
+                // Add event
+                Event event = new Event(eventDate, eventName, isDeduct, repeat);
+                pushEvent(event);
 
                 alertDialog.dismiss();
             }
