@@ -30,6 +30,8 @@ import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.navigation.NavigationBarView;
 import com.google.android.material.tabs.TabLayout;
 import com.google.firebase.Timestamp;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.lang.reflect.Array;
@@ -123,6 +125,7 @@ public class MainActivity extends AppCompatActivity implements CalendarDialog.Ca
         FirebaseFirestore db = FirebaseFirestore.getInstance();
 
         Map<String, Object> newEvent = new HashMap<>();
+        newEvent.put("userId", event.getUserId());
         newEvent.put("name", event.getEventName());
         newEvent.put("date", new Timestamp(event.getEventDate()));
         newEvent.put("isDeduct", event.isDeduct());
@@ -184,16 +187,18 @@ public class MainActivity extends AppCompatActivity implements CalendarDialog.Ca
             @Override
             public void onClick(View view) {
                 // ADD EVENT
-
+                String userId = "";
                 Date eventDate = new Date();
                 String eventName = "";
                 boolean isDeduct = false;
                 int repeat = -1;
 
                 // getting fields
+                FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
                 EditText nameField = (EditText) findViewById(R.id.eventName);
 
                 // getting value from fields
+                userId = user.getUid();
                 eventName = nameField.getText().toString();
                 String option = balanceOption.getSelectedItem().toString();
                 String frequency = repeatOption.getSelectedItem().toString();
@@ -220,7 +225,7 @@ public class MainActivity extends AppCompatActivity implements CalendarDialog.Ca
                     repeat = 3;
 
                 // Add event
-                Event event = new Event(eventDate, eventName, isDeduct, repeat);
+                Event event = new Event(userId, eventDate, eventName, isDeduct, repeat);
                 pushEvent(event);
 
                 alertDialog.dismiss();
