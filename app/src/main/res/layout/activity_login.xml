@@ -90,7 +90,7 @@
         android:layout_height="wrap_content"
         android:backgroundTint="#78CDD7"
         android:text="LOGIN"
-
+        android:onClick="login"
         android:layout_marginTop="30dp"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
