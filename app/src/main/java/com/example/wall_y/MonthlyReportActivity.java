@@ -9,11 +9,17 @@ import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.ListView;
+import android.widget.Spinner;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.navigation.NavigationBarView;
 
+import java.time.LocalDate;
+import java.time.Month;
+import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 
 public class MonthlyReportActivity extends AppCompatActivity {
@@ -24,12 +30,53 @@ public class MonthlyReportActivity extends AppCompatActivity {
     private String text[] = {"Allowance from parents", "Shopping from online shop", "Dinner at the mall"};
 
     ListView listView;
+    private Spinner monthSpinner;
+    private Spinner yearSpinner;
+    private Spinner sortSpinner;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_monthly_report);
 
+        // SPINNER INITIALIZATION
+
+        monthSpinner = (Spinner) findViewById(R.id.month);
+        yearSpinner = (Spinner) findViewById(R.id.year);
+        sortSpinner = (Spinner) findViewById(R.id.sortBy);
+
+        ArrayAdapter<CharSequence> monthAdapter = ArrayAdapter.createFromResource(this,
+                R.array.months,
+                android.R.layout.simple_spinner_item);
+        ArrayAdapter<CharSequence> yearAdapter = ArrayAdapter.createFromResource(this,
+                R.array.years,
+                android.R.layout.simple_spinner_item);
+        ArrayAdapter<CharSequence> sortAdapter = ArrayAdapter.createFromResource(this,
+                R.array.sort_option,
+                android.R.layout.simple_spinner_item);
+
+        monthAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        yearAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        sortAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+
+        monthSpinner.setAdapter(monthAdapter);
+        yearSpinner.setAdapter(yearAdapter);
+        sortSpinner.setAdapter(sortAdapter);
+
+        // Select current month and year
+        Date now = new Date();
+        Calendar cal = Calendar.getInstance();
+        cal.setTime(now);
+
+        int month = cal.get(Calendar.MONTH);
+        int year = cal.get(Calendar.YEAR);
+
+        Log.d(D_TAG, now.toString());
+
+        monthSpinner.setSelection(month);
+        yearSpinner.setSelection(year - 2023);
+
+        // BOTTOM NAVBAR INITIALIZATION
         BottomNavigationView bottomNav = findViewById(R.id.bottomNav);
 
         bottomNav.setSelectedItemId(R.id.navBtnReport);
@@ -59,8 +106,8 @@ public class MonthlyReportActivity extends AppCompatActivity {
         });
 
         listView = findViewById(R.id.listTransaction);
-        TransactionAdapter transactionAdapter = new TransactionAdapter(getApplicationContext(), date, amount, text);
-        listView.setAdapter(transactionAdapter);
+//        EventAdapter eventAdapter = new EventAdapter(getApplicationContext(), date, amount, text);
+//        listView.setAdapter(eventAdapter);
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
@@ -76,4 +123,5 @@ public class MonthlyReportActivity extends AppCompatActivity {
         });
 
     }
+
 }
