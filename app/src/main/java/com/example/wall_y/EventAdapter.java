@@ -2,6 +2,7 @@ package com.example.wall_y;
 
 import android.content.Context;
 import android.graphics.Color;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -9,17 +10,16 @@ import android.widget.BaseAdapter;
 import android.widget.TextView;
 
 import java.util.ArrayList;
-import java.util.Date;
 
 public class EventAdapter extends BaseAdapter {
     Context context;
-    private ArrayList<Event> eventList;
+    ArrayList<Event> eventList;
     LayoutInflater inflater;
 
-    public EventAdapter(Context context, ArrayList<Event> eventList, LayoutInflater inflater) {
+    public EventAdapter(Context context, ArrayList<Event> eventList) {
         this.context = context;
         this.eventList = eventList;
-        this.inflater = inflater;
+        this.inflater = LayoutInflater.from(context);
     }
 
     @Override
@@ -57,4 +57,5 @@ public class EventAdapter extends BaseAdapter {
 
         return view;
     }
+
 }

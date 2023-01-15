@@ -1,17 +1,19 @@
 package com.example.wall_y;
 
+import com.google.firebase.Timestamp;
+
 import java.util.Date;
 
 public class Event {
 
     private String userId;
-    private Date eventDate;
+    private Timestamp eventDate;
     private String eventName;
     private boolean isDeduct;
     private int amount;
     private int repeat; // 0 = one-time, 1 = weekly, 2 = monthly, 3 = annual
 
-    public Event(String userId, Date eventDate, String eventName, boolean isDeduct, int amount, int repeat) {
+    public Event(String userId, Timestamp eventDate, String eventName, boolean isDeduct, int amount, int repeat) {
         this.userId = userId;
         this.eventDate = eventDate;
         this.eventName = eventName;
@@ -36,11 +38,11 @@ public class Event {
         this.userId = userId;
     }
 
-    public Date getEventDate() {
+    public Timestamp getEventDate() {
         return eventDate;
     }
 
-    public void setEventDate(Date eventDate) {
+    public void setEventDate(Timestamp eventDate) {
         this.eventDate = eventDate;
     }
 

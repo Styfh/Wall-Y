@@ -35,6 +35,7 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.lang.reflect.Array;
+import java.sql.Time;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -127,7 +128,7 @@ public class MainActivity extends AppCompatActivity implements CalendarDialog.Ca
         Map<String, Object> newEvent = new HashMap<>();
         newEvent.put("userId", event.getUserId());
         newEvent.put("name", event.getEventName());
-        newEvent.put("date", new Timestamp(event.getEventDate()));
+        newEvent.put("date", event.getEventDate());
         newEvent.put("isDeduct", event.isDeduct());
         newEvent.put("amount", event.getAmount());
         newEvent.put("repeat", event.getRepeat());
@@ -233,7 +234,7 @@ public class MainActivity extends AppCompatActivity implements CalendarDialog.Ca
                     repeat = 3;
 
                 // Add event
-                Event event = new Event(userId, eventDate, eventName, isDeduct, amount, repeat);
+                Event event = new Event(userId, new Timestamp(eventDate), eventName, isDeduct, amount, repeat);
                 pushEvent(event);
 
                 alertDialog.dismiss();

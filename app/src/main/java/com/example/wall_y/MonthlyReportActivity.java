@@ -12,15 +12,30 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.Spinner;
+import android.widget.Toast;
 
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.navigation.NavigationBarView;
+import com.google.firebase.Timestamp;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.Month;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
+import java.util.Map;
 
 public class MonthlyReportActivity extends AppCompatActivity {
 
@@ -105,9 +120,15 @@ public class MonthlyReportActivity extends AppCompatActivity {
             }
         });
 
+        // LISTVIEW INITIALIZATION
+        ArrayList<Event> eventList = new ArrayList<>();
+
         listView = findViewById(R.id.listTransaction);
-//        EventAdapter eventAdapter = new EventAdapter(getApplicationContext(), date, amount, text);
-//        listView.setAdapter(eventAdapter);
+        EventAdapter eventAdapter = new EventAdapter(getApplicationContext(), eventList);
+        listView.setAdapter(eventAdapter);
+
+        getAllEvents(eventAdapter, eventList);
+
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
@@ -122,6 +143,59 @@ public class MonthlyReportActivity extends AppCompatActivity {
             }
         });
 
+    }
+
+    public void getAllEvents(EventAdapter adapter, ArrayList<Event> eventList){
+
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+        Calendar calendar = Calendar.getInstance();
+
+        String uid = user.getUid();
+
+        int month = monthSpinner.getSelectedItemPosition();
+        int year = yearSpinner.getSelectedItemPosition() + 2023;
+
+        calendar.set(Calendar.MONTH, month);
+        calendar.set(Calendar.YEAR, year);
+        calendar.set(Calendar.DAY_OF_MONTH, 1);
+
+        Timestamp start = new Timestamp(calendar.getTime());
+
+        calendar.set(Calendar.DAY_OF_MONTH, calendar.getActualMaximum(Calendar.DAY_OF_MONTH));
+
+        Timestamp end = new Timestamp(calendar.getTime());
+
+        db.collection("events")
+                .whereEqualTo("userId", uid)
+                .whereGreaterThanOrEqualTo("date", start)
+                .whereLessThanOrEqualTo("date", end)
+                .get()
+                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                        if(task.isSuccessful()){
+                            for(QueryDocumentSnapshot document : task.getResult()){
+                                Log.d(D_TAG, document.getData().toString());
+
+                                String userId = document.getString("userId");
+                                String name = document.getString("name");
+                                Timestamp timestamp = null;
+
+                                timestamp = document.getTimestamp("date");
+                                boolean isDeduct = document.getBoolean("isDeduct");
+                                int amount = document.getLong("amount").intValue();
+                                int repeat = document.getLong("repeat").intValue();
+
+                                Event event = new Event(userId, timestamp, name, isDeduct, amount, repeat);
+                                eventList.add(event);
+                                adapter.notifyDataSetChanged();
+                            }
+                        } else{
+                            Log.d(D_TAG, "Error getting documents: ", task.getException());
+                        }
+                    }
+                });
     }
 
 }
