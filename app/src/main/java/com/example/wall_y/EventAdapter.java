@@ -1,37 +1,35 @@
 package com.example.wall_y;
 
 import android.content.Context;
+import android.graphics.Color;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.TextView;
 
-import java.util.Date;
+import java.util.ArrayList;
 
-public class TransactionAdapter extends BaseAdapter {
+public class EventAdapter extends BaseAdapter {
     Context context;
-    private Date date[];
-    private int amount[];
-    private String text[];
+    ArrayList<Event> eventList;
     LayoutInflater inflater;
 
-    public TransactionAdapter(Context context, Date[] date, int[] amount, String[] text) {
+    public EventAdapter(Context context, ArrayList<Event> eventList) {
         this.context = context;
-        this.date = date;
-        this.amount = amount;
-        this.text = text;
-        inflater = LayoutInflater.from(context);
+        this.eventList = eventList;
+        this.inflater = LayoutInflater.from(context);
     }
 
     @Override
     public int getCount() {
-        return text.length;
+        return eventList.size();
     }
 
     @Override
     public Object getItem(int i) {
-        return null;
+        return eventList.get(i);
     }
 
     @Override
@@ -47,10 +45,17 @@ public class TransactionAdapter extends BaseAdapter {
         TextView textView = view.findViewById(R.id.text);
         TextView amountView = view.findViewById(R.id.amount);
 
-        dateView.setText(date[i].toString());
-        textView.setText(text[i]);
-        amountView.setText(Integer.toString(amount[i]));
+        dateView.setText(eventList.get(i).getEventDate().toString());
+        textView.setText(eventList.get(i).getEventName());
+        amountView.setText(Integer.toString(eventList.get(i).getAmount()));
+
+        if(eventList.get(i).isDeduct()){
+            amountView.setTextColor(Color.RED);
+        } else{
+            amountView.setTextColor(Color.GREEN);
+        }
 
         return view;
     }
+
 }

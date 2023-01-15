@@ -14,6 +14,32 @@
         <item>Deduct balance</item>
     </string-array>
 
+    <string-array name="months">
+        <item>January</item>
+        <item>February</item>
+        <item>March</item>
+        <item>April</item>
+        <item>May</item>
+        <item>June</item>
+        <item>July</item>
+        <item>August</item>
+        <item>September</item>
+        <item>October</item>
+        <item>November</item>
+        <item>December</item>
+    </string-array>
+
+    <string-array name="years">
+        <item>2023</item>
+        <item>2024</item>
+        <item>2025</item>
+    </string-array>
+
+    <string-array name="sort_option">
+        <item>ASC</item>
+        <item>DESC</item>
+    </string-array>
+
     <string name="add">Add</string>
     <string name="cancel">Cancel</string>
 </resources>
