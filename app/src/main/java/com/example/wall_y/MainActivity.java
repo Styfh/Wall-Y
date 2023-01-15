@@ -20,12 +20,15 @@ import android.widget.ArrayAdapter;
 import android.widget.CalendarView;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.ListView;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.navigation.NavigationBarView;
 import com.google.android.material.tabs.TabLayout;
@@ -33,34 +36,49 @@ import com.google.firebase.Timestamp;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
 
 import java.lang.reflect.Array;
 import java.sql.Time;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
-public class MainActivity extends AppCompatActivity implements CalendarDialog.CalendarDialogListener {
+public class MainActivity extends AppCompatActivity {
 
     final String D_TAG = "MAIN";
     private CalendarView calView;
-    private TextView calEventPlaceholder;
+    private ListView dayEventView;
+    private EventAdapter dayEventAdapter;
     public String date;
     public int day = 0;
     public int month = 0;
     public int year = 0;
+
+    private ArrayList<Event> eventList;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        // INITIALIZE LISTVIEW
+        dayEventView = (ListView) findViewById(R.id.calendarEvents);
+
+        eventList = new ArrayList<>();
+
+        dayEventAdapter = new EventAdapter(this, eventList);
+        dayEventView.setAdapter(dayEventAdapter);
+
         // CALENDAR
         calView = (CalendarView) findViewById(R.id.calendarView);
-        calEventPlaceholder = findViewById(R.id.calendarEventPlaceholder);
+
 
         calView.setOnDateChangeListener(new CalendarView.OnDateChangeListener() {
             @Override
@@ -72,6 +90,8 @@ public class MainActivity extends AppCompatActivity implements CalendarDialog.Ca
                 year = i;
                 date = day + "/" + month + "/" + year;
 
+
+                getEventsInDay();
             }
 
         });
@@ -122,7 +142,7 @@ public class MainActivity extends AppCompatActivity implements CalendarDialog.Ca
 
     }
 
-    private void pushEvent(Event event){
+    private void pushEvent(@NonNull Event event){
         FirebaseFirestore db = FirebaseFirestore.getInstance();
 
         Map<String, Object> newEvent = new HashMap<>();
@@ -247,8 +267,55 @@ public class MainActivity extends AppCompatActivity implements CalendarDialog.Ca
 
     }
 
-    @Override
-    public void applyText(String reminder) {
-        calEventPlaceholder.setText(date + " " + reminder);
+    public void getEventsInDay() {
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+
+        Date day = null;
+
+        String uid = user.getUid();
+
+        try{
+            day = new SimpleDateFormat("dd/mm/yy").parse(date);
+        } catch (ParseException e){
+            e.printStackTrace();
+        }
+
+        Log.d(D_TAG, day.toString());
+        Log.d(D_TAG, uid);
+
+        db.collection("events")
+                .whereEqualTo("userId", uid)
+                .whereEqualTo("date", new Timestamp(day))
+                .get()
+                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                        if(task.isSuccessful()){
+                            for(QueryDocumentSnapshot document : task.getResult()){
+                                Log.d(D_TAG, document.getData().toString());
+                                Log.d(D_TAG, "hello");
+
+                                String userId = document.getString("userId");
+                                String name = document.getString("name");
+                                Timestamp timestamp = null;
+
+                                timestamp = document.getTimestamp("date");
+                                boolean isDeduct = document.getBoolean("isDeduct");
+                                int amount = document.getLong("amount").intValue();
+                                int repeat = document.getLong("repeat").intValue();
+
+                                Event event = new Event(userId, timestamp, name, isDeduct, amount, repeat);
+                                eventList.add(event);
+                                dayEventAdapter.notifyDataSetChanged();
+
+
+                            }
+                        } else{
+                            Log.d(D_TAG, "Error getting documents: ", task.getException());
+                        }
+                    }
+                });
     }
+
 }
