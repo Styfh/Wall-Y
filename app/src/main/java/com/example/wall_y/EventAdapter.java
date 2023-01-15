@@ -9,17 +9,20 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.TextView;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 
 public class EventAdapter extends BaseAdapter {
     Context context;
     ArrayList<Event> eventList;
     LayoutInflater inflater;
+    SimpleDateFormat sdf;
 
     public EventAdapter(Context context, ArrayList<Event> eventList) {
         this.context = context;
         this.eventList = eventList;
         this.inflater = LayoutInflater.from(context);
+        this.sdf = new SimpleDateFormat("dd/mm/yyyy");
     }
 
     @Override
@@ -45,7 +48,9 @@ public class EventAdapter extends BaseAdapter {
         TextView textView = view.findViewById(R.id.text);
         TextView amountView = view.findViewById(R.id.amount);
 
-        dateView.setText(eventList.get(i).getEventDate().toString());
+        String dateStr = sdf.format(eventList.get(i).getEventDate().toDate());
+
+        dateView.setText(dateStr);
         textView.setText(eventList.get(i).getEventName());
         amountView.setText(Integer.toString(eventList.get(i).getAmount()));
 

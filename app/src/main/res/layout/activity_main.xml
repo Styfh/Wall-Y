@@ -49,13 +49,12 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <TextView
-        android:id="@+id/calendarEventPlaceholder"
-        android:layout_width="100dp"
-        android:layout_height="100dp"
-        android:layout_marginStart="152dp"
-        android:layout_marginTop="404dp"
-        android:text="placeholder untuk calendar event bisa keluar apa nggak"
+    <ListView
+        android:id="@+id/calendarEvents"
+        android:layout_width="350dp"
+        android:layout_height="195dp"
+        android:layout_marginStart="28dp"
+        android:layout_marginTop="396dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
