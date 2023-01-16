@@ -16,6 +16,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.CalendarView;
 import android.widget.EditText;
@@ -76,6 +77,52 @@ public class MainActivity extends AppCompatActivity {
         dayEventAdapter = new EventAdapter(this, eventList);
         dayEventView.setAdapter(dayEventAdapter);
 
+        dayEventView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
+                AlertDialog.Builder builder = new AlertDialog.Builder(view.getContext());
+                LayoutInflater inflater = getLayoutInflater();
+
+                builder.setMessage(R.string.delete_confirmation);
+
+                builder.setPositiveButton(R.string.delete, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        Log.d(D_TAG, Integer.toString(position));
+
+                        Event eventToDelete = dayEventAdapter.getItem(position);
+
+                        FirebaseFirestore db = FirebaseFirestore.getInstance();
+                        db.collection("events").whereEqualTo("date", eventToDelete.getEventDate())
+                                        .whereEqualTo("name", eventToDelete.getEventName())
+                                                .get()
+                                                        .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                                                            @Override
+                                                            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                                                                if(task.isSuccessful()){
+                                                                    for(QueryDocumentSnapshot document : task.getResult()){
+                                                                        document.getReference().delete();
+                                                                        Toast.makeText(getApplicationContext(), "Event deleted", Toast.LENGTH_LONG).show();
+                                                                    }
+                                                                } else{
+                                                                    Toast.makeText(getApplicationContext(), "Event failed to delete", Toast.LENGTH_LONG).show();
+                                                                }
+                                                            }
+                                                        });
+                    }
+                });
+                builder.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+
+                    }
+                });
+
+                AlertDialog alertDialog = builder.create();
+                alertDialog.show();
+            }
+        });
+
         // CALENDAR
         calView = (CalendarView) findViewById(R.id.calendarView);
 
@@ -90,6 +137,9 @@ public class MainActivity extends AppCompatActivity {
                 year = i;
                 date = day + "/" + month + "/" + year;
 
+                eventList = new ArrayList<>();
+                dayEventAdapter = new EventAdapter(getApplicationContext(), eventList);
+                dayEventView.setAdapter(dayEventAdapter);
 
                 getEventsInDay();
             }
@@ -158,14 +208,14 @@ public class MainActivity extends AppCompatActivity {
                 .addOnSuccessListener(new OnSuccessListener<Void>() {
                     @Override
                     public void onSuccess(Void unused) {
-                        Toast.makeText(getApplicationContext(), "Event added successfully", Toast.LENGTH_LONG);
+                        Toast.makeText(getApplicationContext(), "Event added successfully", Toast.LENGTH_LONG).show();
                         Log.d(D_TAG, event.toString());
                     }
                 })
                 .addOnFailureListener(new OnFailureListener() {
                     @Override
                     public void onFailure(@NonNull Exception e) {
-                        Toast.makeText(getApplicationContext(), "Failed to add event", Toast.LENGTH_LONG);
+                        Toast.makeText(getApplicationContext(), "Failed to add event", Toast.LENGTH_LONG).show();
                     }
                 });
 
@@ -294,7 +344,6 @@ public class MainActivity extends AppCompatActivity {
                         if(task.isSuccessful()){
                             for(QueryDocumentSnapshot document : task.getResult()){
                                 Log.d(D_TAG, document.getData().toString());
-                                Log.d(D_TAG, "hello");
 
                                 String userId = document.getString("userId");
                                 String name = document.getString("name");

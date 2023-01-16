@@ -3,9 +3,12 @@ package com.example.wall_y;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
@@ -131,15 +134,47 @@ public class MonthlyReportActivity extends AppCompatActivity {
 
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
-            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-//                Intent intent = new Intent(MonthlyReportActivity.this, .class);
-//                intent.putExtra("image", foodImage[i]);
-//                intent.putExtra("text", foodData[i]);
-//                intent.putExtra("price", foodPrice[i]);
+            public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
+                AlertDialog.Builder builder = new AlertDialog.Builder(view.getContext());
+                LayoutInflater inflater = getLayoutInflater();
 
-//                intent.putExtra("itemsBoughtList", itemsBoughtList);
+                builder.setMessage(R.string.delete_confirmation);
 
-//                startActivity(intent);
+                builder.setPositiveButton(R.string.delete, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        Log.d(D_TAG, Integer.toString(position));
+
+                        Event eventToDelete = eventAdapter.getItem(position);
+
+                        FirebaseFirestore db = FirebaseFirestore.getInstance();
+                        db.collection("events").whereEqualTo("date", eventToDelete.getEventDate())
+                                .whereEqualTo("name", eventToDelete.getEventName())
+                                .get()
+                                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                                    @Override
+                                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                                        if(task.isSuccessful()){
+                                            for(QueryDocumentSnapshot document : task.getResult()){
+                                                document.getReference().delete();
+                                                Toast.makeText(getApplicationContext(), "Event deleted", Toast.LENGTH_LONG).show();
+                                            }
+                                        } else{
+                                            Toast.makeText(getApplicationContext(), "Event failed to delete", Toast.LENGTH_LONG).show();
+                                        }
+                                    }
+                                });
+                    }
+                });
+                builder.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+
+                    }
+                });
+
+                AlertDialog alertDialog = builder.create();
+                alertDialog.show();
             }
         });
 
@@ -150,6 +185,10 @@ public class MonthlyReportActivity extends AppCompatActivity {
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
         FirebaseFirestore db = FirebaseFirestore.getInstance();
         Calendar calendar = Calendar.getInstance();
+
+        eventList = new ArrayList<>();
+        adapter = new EventAdapter(getApplicationContext(), eventList);
+        listView.setAdapter(adapter);
 
         String uid = user.getUid();
 
@@ -166,6 +205,8 @@ public class MonthlyReportActivity extends AppCompatActivity {
 
         Timestamp end = new Timestamp(calendar.getTime());
 
+        ArrayList<Event> finalEventList = eventList;
+        EventAdapter finalAdapter = adapter;
         db.collection("events")
                 .whereEqualTo("userId", uid)
                 .whereGreaterThanOrEqualTo("date", start)
@@ -188,8 +229,8 @@ public class MonthlyReportActivity extends AppCompatActivity {
                                 int repeat = document.getLong("repeat").intValue();
 
                                 Event event = new Event(userId, timestamp, name, isDeduct, amount, repeat);
-                                eventList.add(event);
-                                adapter.notifyDataSetChanged();
+                                finalEventList.add(event);
+                                finalAdapter.notifyDataSetChanged();
                             }
                         } else{
                             Log.d(D_TAG, "Error getting documents: ", task.getException());
