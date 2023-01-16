@@ -54,10 +54,10 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         if(task.isSuccessful()){
-                            Toast.makeText(getApplicationContext(), "Login successful", Toast.LENGTH_LONG);
+                            Toast.makeText(getApplicationContext(), "Login successful", Toast.LENGTH_LONG).show();
                             startActivity(new Intent(getApplicationContext(), MainActivity.class));
                         } else{
-                            Toast.makeText(getApplicationContext(), "Login failed", Toast.LENGTH_LONG);
+                            Toast.makeText(getApplicationContext(), "Login failed", Toast.LENGTH_LONG).show();
                         }
                     }
                 });
