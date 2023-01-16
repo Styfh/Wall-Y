@@ -137,6 +137,9 @@ public class MainActivity extends AppCompatActivity {
                 year = i;
                 date = day + "/" + month + "/" + year;
 
+                eventList = new ArrayList<>();
+                dayEventAdapter = new EventAdapter(getApplicationContext(), eventList);
+                dayEventView.setAdapter(dayEventAdapter);
 
                 getEventsInDay();
             }
@@ -341,7 +344,6 @@ public class MainActivity extends AppCompatActivity {
                         if(task.isSuccessful()){
                             for(QueryDocumentSnapshot document : task.getResult()){
                                 Log.d(D_TAG, document.getData().toString());
-                                Log.d(D_TAG, "hello");
 
                                 String userId = document.getString("userId");
                                 String name = document.getString("name");
