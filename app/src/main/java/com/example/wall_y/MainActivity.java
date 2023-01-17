@@ -133,9 +133,9 @@ public class MainActivity extends AppCompatActivity {
                 //date = i + "/" + (i1+1) + "/" + i2;
                 //Log.d(D_TAG, "date: " + date);
                 day = i2;
-                month = i1+1;
+                month = i1;
                 year = i;
-                date = day + "/" + month + "/" + year;
+//                date = day + "/" + month + "/" + year;
 
                 eventList = new ArrayList<>();
                 dayEventAdapter = new EventAdapter(getApplicationContext(), eventList);
@@ -282,11 +282,14 @@ public class MainActivity extends AppCompatActivity {
                 String option = balanceOption.getSelectedItem().toString();
                 String frequency = repeatOption.getSelectedItem().toString();
 
-                try {
-                    eventDate = new SimpleDateFormat("dd/mm/yy").parse(date);
-                } catch (ParseException e) {
-                    e.printStackTrace();
-                }
+                Calendar calendar = Calendar.getInstance();
+                calendar.set(Calendar.DAY_OF_MONTH, day);
+                calendar.set(Calendar.MONTH, month);
+                calendar.set(Calendar.YEAR, year);
+                calendar.set(Calendar.HOUR_OF_DAY, 0);
+                calendar.set(Calendar.MINUTE, 0);
+                calendar.set(Calendar.SECOND, 0);
+                calendar.set(Calendar.MILLISECOND, 0);
 
                 // Processing option and frequency
                 if(option.equals("Deduct balance"))
@@ -304,7 +307,7 @@ public class MainActivity extends AppCompatActivity {
                     repeat = 3;
 
                 // Add event
-                Event event = new Event(userId, new Timestamp(eventDate), eventName, isDeduct, amount, repeat);
+                Event event = new Event(userId, new Timestamp(calendar.getTime()), eventName, isDeduct, amount, repeat);
                 pushEvent(event);
 
                 alertDialog.dismiss();
@@ -321,22 +324,23 @@ public class MainActivity extends AppCompatActivity {
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
         FirebaseFirestore db = FirebaseFirestore.getInstance();
 
-        Date day = null;
-
         String uid = user.getUid();
 
-        try{
-            day = new SimpleDateFormat("dd/mm/yy").parse(date);
-        } catch (ParseException e){
-            e.printStackTrace();
-        }
+        Calendar calendar = Calendar.getInstance();
+        calendar.set(Calendar.DAY_OF_MONTH, day);
+        calendar.set(Calendar.MONTH, month);
+        calendar.set(Calendar.YEAR, year);
+        calendar.set(Calendar.HOUR_OF_DAY, 0);
+        calendar.set(Calendar.MINUTE, 0);
+        calendar.set(Calendar.SECOND, 0);
+        calendar.set(Calendar.MILLISECOND, 0);
 
-        Log.d(D_TAG, day.toString());
+        Log.d(D_TAG, calendar.getTime().toString());
         Log.d(D_TAG, uid);
 
         db.collection("events")
                 .whereEqualTo("userId", uid)
-                .whereEqualTo("date", new Timestamp(day))
+                .whereEqualTo("date", new Timestamp(calendar.getTime()))
                 .get()
                 .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                     @Override
