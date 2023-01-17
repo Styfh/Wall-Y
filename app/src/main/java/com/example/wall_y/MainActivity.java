@@ -77,47 +77,49 @@ public class MainActivity extends AppCompatActivity {
         dayEventAdapter = new EventAdapter(this, eventList);
         dayEventView.setAdapter(dayEventAdapter);
 
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+
+        builder.setMessage(R.string.delete_confirmation);
+
+        builder.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+
+            }
+        });
+
         dayEventView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
-                AlertDialog.Builder builder = new AlertDialog.Builder(view.getContext());
-                LayoutInflater inflater = getLayoutInflater();
-
-                builder.setMessage(R.string.delete_confirmation);
 
                 builder.setPositiveButton(R.string.delete, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
-                        Log.d(D_TAG, Integer.toString(position));
 
                         Event eventToDelete = dayEventAdapter.getItem(position);
+                        eventList.remove(eventToDelete);
+                        dayEventAdapter.notifyDataSetChanged();
 
                         FirebaseFirestore db = FirebaseFirestore.getInstance();
                         db.collection("events").whereEqualTo("date", eventToDelete.getEventDate())
-                                        .whereEqualTo("name", eventToDelete.getEventName())
-                                                .get()
-                                                        .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                                                            @Override
-                                                            public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                                                                if(task.isSuccessful()){
-                                                                    for(QueryDocumentSnapshot document : task.getResult()){
-                                                                        document.getReference().delete();
-                                                                        Toast.makeText(getApplicationContext(), "Event deleted", Toast.LENGTH_LONG).show();
-                                                                    }
-                                                                } else{
-                                                                    Toast.makeText(getApplicationContext(), "Event failed to delete", Toast.LENGTH_LONG).show();
-                                                                }
-                                                            }
-                                                        });
-                    }
-                });
-                builder.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialogInterface, int i) {
+                                .whereEqualTo("name", eventToDelete.getEventName())
+                                .get()
+                                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                                    @Override
+                                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                                        if(task.isSuccessful()){
+                                            for(QueryDocumentSnapshot document : task.getResult()){
+                                                document.getReference().delete();
+                                                Toast.makeText(getApplicationContext(), "Event deleted", Toast.LENGTH_LONG).show();
+                                            }
+                                        } else{
+                                            Toast.makeText(getApplicationContext(), "Event failed to delete", Toast.LENGTH_LONG).show();
+                                        }
+                                    }
+                                });
 
                     }
                 });
-
                 AlertDialog alertDialog = builder.create();
                 alertDialog.show();
             }
@@ -133,9 +135,9 @@ public class MainActivity extends AppCompatActivity {
                 //date = i + "/" + (i1+1) + "/" + i2;
                 //Log.d(D_TAG, "date: " + date);
                 day = i2;
-                month = i1+1;
+                month = i1;
                 year = i;
-                date = day + "/" + month + "/" + year;
+//                date = day + "/" + month + "/" + year;
 
                 eventList = new ArrayList<>();
                 dayEventAdapter = new EventAdapter(getApplicationContext(), eventList);
@@ -282,11 +284,14 @@ public class MainActivity extends AppCompatActivity {
                 String option = balanceOption.getSelectedItem().toString();
                 String frequency = repeatOption.getSelectedItem().toString();
 
-                try {
-                    eventDate = new SimpleDateFormat("dd/mm/yy").parse(date);
-                } catch (ParseException e) {
-                    e.printStackTrace();
-                }
+                Calendar calendar = Calendar.getInstance();
+                calendar.set(Calendar.DAY_OF_MONTH, day);
+                calendar.set(Calendar.MONTH, month);
+                calendar.set(Calendar.YEAR, year);
+                calendar.set(Calendar.HOUR_OF_DAY, 0);
+                calendar.set(Calendar.MINUTE, 0);
+                calendar.set(Calendar.SECOND, 0);
+                calendar.set(Calendar.MILLISECOND, 0);
 
                 // Processing option and frequency
                 if(option.equals("Deduct balance"))
@@ -304,7 +309,7 @@ public class MainActivity extends AppCompatActivity {
                     repeat = 3;
 
                 // Add event
-                Event event = new Event(userId, new Timestamp(eventDate), eventName, isDeduct, amount, repeat);
+                Event event = new Event(userId, new Timestamp(calendar.getTime()), eventName, isDeduct, amount, repeat);
                 pushEvent(event);
 
                 alertDialog.dismiss();
@@ -321,22 +326,23 @@ public class MainActivity extends AppCompatActivity {
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
         FirebaseFirestore db = FirebaseFirestore.getInstance();
 
-        Date day = null;
-
         String uid = user.getUid();
 
-        try{
-            day = new SimpleDateFormat("dd/mm/yy").parse(date);
-        } catch (ParseException e){
-            e.printStackTrace();
-        }
+        Calendar calendar = Calendar.getInstance();
+        calendar.set(Calendar.DAY_OF_MONTH, day);
+        calendar.set(Calendar.MONTH, month);
+        calendar.set(Calendar.YEAR, year);
+        calendar.set(Calendar.HOUR_OF_DAY, 0);
+        calendar.set(Calendar.MINUTE, 0);
+        calendar.set(Calendar.SECOND, 0);
+        calendar.set(Calendar.MILLISECOND, 0);
 
-        Log.d(D_TAG, day.toString());
+        Log.d(D_TAG, calendar.getTime().toString());
         Log.d(D_TAG, uid);
 
         db.collection("events")
                 .whereEqualTo("userId", uid)
-                .whereEqualTo("date", new Timestamp(day))
+                .whereEqualTo("date", new Timestamp(calendar.getTime()))
                 .get()
                 .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                     @Override

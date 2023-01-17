@@ -13,6 +13,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.ListView;
 import android.widget.Spinner;
 import android.widget.Toast;
@@ -50,7 +51,9 @@ public class MonthlyReportActivity extends AppCompatActivity {
     ListView listView;
     private Spinner monthSpinner;
     private Spinner yearSpinner;
-    private Spinner sortSpinner;
+
+    private ArrayList<Event> eventList;
+    private EventAdapter adapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -61,7 +64,6 @@ public class MonthlyReportActivity extends AppCompatActivity {
 
         monthSpinner = (Spinner) findViewById(R.id.month);
         yearSpinner = (Spinner) findViewById(R.id.year);
-        sortSpinner = (Spinner) findViewById(R.id.sortBy);
 
         ArrayAdapter<CharSequence> monthAdapter = ArrayAdapter.createFromResource(this,
                 R.array.months,
@@ -79,7 +81,6 @@ public class MonthlyReportActivity extends AppCompatActivity {
 
         monthSpinner.setAdapter(monthAdapter);
         yearSpinner.setAdapter(yearAdapter);
-        sortSpinner.setAdapter(sortAdapter);
 
         // Select current month and year
         Date now = new Date();
@@ -124,28 +125,31 @@ public class MonthlyReportActivity extends AppCompatActivity {
         });
 
         // LISTVIEW INITIALIZATION
-        ArrayList<Event> eventList = new ArrayList<>();
 
         listView = findViewById(R.id.listTransaction);
-        EventAdapter eventAdapter = new EventAdapter(getApplicationContext(), eventList);
-        listView.setAdapter(eventAdapter);
 
-        getAllEvents(eventAdapter, eventList);
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+
+        builder.setMessage(R.string.delete_confirmation);
+        builder.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+
+            }
+        });
 
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
-                AlertDialog.Builder builder = new AlertDialog.Builder(view.getContext());
-                LayoutInflater inflater = getLayoutInflater();
-
-                builder.setMessage(R.string.delete_confirmation);
 
                 builder.setPositiveButton(R.string.delete, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
                         Log.d(D_TAG, Integer.toString(position));
 
-                        Event eventToDelete = eventAdapter.getItem(position);
+                        Event eventToDelete = adapter.getItem(position);
+                        eventList.remove(eventToDelete);
+                        adapter.notifyDataSetChanged();
 
                         FirebaseFirestore db = FirebaseFirestore.getInstance();
                         db.collection("events").whereEqualTo("date", eventToDelete.getEventDate())
@@ -166,12 +170,6 @@ public class MonthlyReportActivity extends AppCompatActivity {
                                 });
                     }
                 });
-                builder.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialogInterface, int i) {
-
-                    }
-                });
 
                 AlertDialog alertDialog = builder.create();
                 alertDialog.show();
@@ -180,15 +178,11 @@ public class MonthlyReportActivity extends AppCompatActivity {
 
     }
 
-    public void getAllEvents(EventAdapter adapter, ArrayList<Event> eventList){
+    public void getAllEvents(View v){
 
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
         FirebaseFirestore db = FirebaseFirestore.getInstance();
         Calendar calendar = Calendar.getInstance();
-
-        eventList = new ArrayList<>();
-        adapter = new EventAdapter(getApplicationContext(), eventList);
-        listView.setAdapter(adapter);
 
         String uid = user.getUid();
 
@@ -198,6 +192,10 @@ public class MonthlyReportActivity extends AppCompatActivity {
         calendar.set(Calendar.MONTH, month);
         calendar.set(Calendar.YEAR, year);
         calendar.set(Calendar.DAY_OF_MONTH, 1);
+        calendar.set(Calendar.HOUR_OF_DAY, 0);
+        calendar.set(Calendar.MINUTE, 0);
+        calendar.set(Calendar.SECOND, 0);
+        calendar.set(Calendar.MILLISECOND, 0);
 
         Timestamp start = new Timestamp(calendar.getTime());
 
@@ -205,12 +203,17 @@ public class MonthlyReportActivity extends AppCompatActivity {
 
         Timestamp end = new Timestamp(calendar.getTime());
 
-        ArrayList<Event> finalEventList = eventList;
-        EventAdapter finalAdapter = adapter;
+        eventList = new ArrayList<>();
+        adapter = new EventAdapter(this, eventList);
+        listView.setAdapter(adapter);
+
+        Log.d(D_TAG, start.toDate().toString());
+        Log.d(D_TAG ,end.toDate().toString());
+
         db.collection("events")
                 .whereEqualTo("userId", uid)
-                .whereGreaterThanOrEqualTo("date", start)
-                .whereLessThanOrEqualTo("date", end)
+                .whereGreaterThan("date", start)
+                .whereLessThan("date", end)
                 .get()
                 .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                     @Override
@@ -229,8 +232,8 @@ public class MonthlyReportActivity extends AppCompatActivity {
                                 int repeat = document.getLong("repeat").intValue();
 
                                 Event event = new Event(userId, timestamp, name, isDeduct, amount, repeat);
-                                finalEventList.add(event);
-                                finalAdapter.notifyDataSetChanged();
+                                eventList.add(event);
+                                adapter.notifyDataSetChanged();
                             }
                         } else{
                             Log.d(D_TAG, "Error getting documents: ", task.getException());

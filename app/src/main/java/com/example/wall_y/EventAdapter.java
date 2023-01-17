@@ -13,16 +13,17 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 
 public class EventAdapter extends BaseAdapter {
-    Context context;
-    ArrayList<Event> eventList;
-    LayoutInflater inflater;
-    SimpleDateFormat sdf;
+
+    private Context context;
+    private ArrayList<Event> eventList;
+    private LayoutInflater inflater;
+    private SimpleDateFormat sdf;
 
     public EventAdapter(Context context, ArrayList<Event> eventList) {
         this.context = context;
         this.eventList = eventList;
         this.inflater = LayoutInflater.from(context);
-        this.sdf = new SimpleDateFormat("dd/mm/yyyy");
+        sdf = new SimpleDateFormat("dd/MM/yyyy");
     }
 
     @Override
