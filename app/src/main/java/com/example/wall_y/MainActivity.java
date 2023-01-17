@@ -94,21 +94,21 @@ public class MainActivity extends AppCompatActivity {
 
                         FirebaseFirestore db = FirebaseFirestore.getInstance();
                         db.collection("events").whereEqualTo("date", eventToDelete.getEventDate())
-                                        .whereEqualTo("name", eventToDelete.getEventName())
-                                                .get()
-                                                        .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                                                            @Override
-                                                            public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                                                                if(task.isSuccessful()){
-                                                                    for(QueryDocumentSnapshot document : task.getResult()){
-                                                                        document.getReference().delete();
-                                                                        Toast.makeText(getApplicationContext(), "Event deleted", Toast.LENGTH_LONG).show();
-                                                                    }
-                                                                } else{
-                                                                    Toast.makeText(getApplicationContext(), "Event failed to delete", Toast.LENGTH_LONG).show();
-                                                                }
-                                                            }
-                                                        });
+                                .whereEqualTo("name", eventToDelete.getEventName())
+                                .get()
+                                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                                    @Override
+                                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                                        if(task.isSuccessful()){
+                                            for(QueryDocumentSnapshot document : task.getResult()){
+                                                document.getReference().delete();
+                                                Toast.makeText(getApplicationContext(), "Event deleted", Toast.LENGTH_LONG).show();
+                                            }
+                                        } else{
+                                            Toast.makeText(getApplicationContext(), "Event failed to delete", Toast.LENGTH_LONG).show();
+                                        }
+                                    }
+                                });
                     }
                 });
                 builder.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {

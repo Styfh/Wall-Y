@@ -128,7 +128,7 @@ public class MonthlyReportActivity extends AppCompatActivity {
         eventList = new ArrayList<>();
 
         listView = findViewById(R.id.listTransaction);
-        EventAdapter eventAdapter = new EventAdapter(getApplicationContext(), eventList);
+        EventAdapter eventAdapter = new EventAdapter(this, eventList);
         listView.setAdapter(eventAdapter);
 
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
