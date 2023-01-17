@@ -77,20 +77,28 @@ public class MainActivity extends AppCompatActivity {
         dayEventAdapter = new EventAdapter(this, eventList);
         dayEventView.setAdapter(dayEventAdapter);
 
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+
+        builder.setMessage(R.string.delete_confirmation);
+
+        builder.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+
+            }
+        });
+
         dayEventView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
-                AlertDialog.Builder builder = new AlertDialog.Builder(view.getContext());
-                LayoutInflater inflater = getLayoutInflater();
-
-                builder.setMessage(R.string.delete_confirmation);
 
                 builder.setPositiveButton(R.string.delete, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
-                        Log.d(D_TAG, Integer.toString(position));
 
                         Event eventToDelete = dayEventAdapter.getItem(position);
+                        eventList.remove(eventToDelete);
+                        dayEventAdapter.notifyDataSetChanged();
 
                         FirebaseFirestore db = FirebaseFirestore.getInstance();
                         db.collection("events").whereEqualTo("date", eventToDelete.getEventDate())
@@ -109,15 +117,9 @@ public class MainActivity extends AppCompatActivity {
                                         }
                                     }
                                 });
-                    }
-                });
-                builder.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialogInterface, int i) {
 
                     }
                 });
-
                 AlertDialog alertDialog = builder.create();
                 alertDialog.show();
             }

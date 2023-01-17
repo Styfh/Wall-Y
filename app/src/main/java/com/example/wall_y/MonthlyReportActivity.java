@@ -125,26 +125,31 @@ public class MonthlyReportActivity extends AppCompatActivity {
         });
 
         // LISTVIEW INITIALIZATION
-        eventList = new ArrayList<>();
 
         listView = findViewById(R.id.listTransaction);
-        EventAdapter eventAdapter = new EventAdapter(this, eventList);
-        listView.setAdapter(eventAdapter);
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+
+        builder.setMessage(R.string.delete_confirmation);
+        builder.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+
+            }
+        });
 
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
-                AlertDialog.Builder builder = new AlertDialog.Builder(view.getContext());
-                LayoutInflater inflater = getLayoutInflater();
-
-                builder.setMessage(R.string.delete_confirmation);
 
                 builder.setPositiveButton(R.string.delete, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
                         Log.d(D_TAG, Integer.toString(position));
 
-                        Event eventToDelete = eventAdapter.getItem(position);
+                        Event eventToDelete = adapter.getItem(position);
+                        eventList.remove(eventToDelete);
+                        adapter.notifyDataSetChanged();
 
                         FirebaseFirestore db = FirebaseFirestore.getInstance();
                         db.collection("events").whereEqualTo("date", eventToDelete.getEventDate())
@@ -163,12 +168,6 @@ public class MonthlyReportActivity extends AppCompatActivity {
                                         }
                                     }
                                 });
-                    }
-                });
-                builder.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialogInterface, int i) {
-
                     }
                 });
 
