@@ -309,7 +309,7 @@ public class MainActivity extends AppCompatActivity {
 //                    repeat = 3;
 
                 // Add event
-                Event event = new Event(userId, new Timestamp(calendar.getTime()), eventName, isDeduct, amount, repeat);
+                Event event = new Event(userId, new Timestamp(calendar.getTime()), eventName, isDeduct, amount);
                 pushEvent(event);
 
                 alertDialog.dismiss();
@@ -358,9 +358,9 @@ public class MainActivity extends AppCompatActivity {
                                 timestamp = document.getTimestamp("date");
                                 boolean isDeduct = document.getBoolean("isDeduct");
                                 int amount = document.getLong("amount").intValue();
-                                int repeat = document.getLong("repeat").intValue();
+//                                int repeat = document.getLong("repeat").intValue();
 
-                                Event event = new Event(userId, timestamp, name, isDeduct, amount, repeat);
+                                Event event = new Event(userId, timestamp, name, isDeduct, amount);
                                 eventList.add(event);
                                 dayEventAdapter.notifyDataSetChanged();
 

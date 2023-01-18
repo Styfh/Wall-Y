@@ -13,7 +13,7 @@ public class Event {
     private int amount;
 //    private int repeat; // 0 = one-time, 1 = weekly, 2 = monthly, 3 = annual
 
-    public Event(String userId, Timestamp eventDate, String eventName, boolean isDeduct, int amount, int repeat) {
+    public Event(String userId, Timestamp eventDate, String eventName, boolean isDeduct, int amount) {
         this.userId = userId;
         this.eventDate = eventDate;
         this.eventName = eventName;
