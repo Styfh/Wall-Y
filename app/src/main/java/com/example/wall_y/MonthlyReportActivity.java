@@ -229,9 +229,9 @@ public class MonthlyReportActivity extends AppCompatActivity {
                                 timestamp = document.getTimestamp("date");
                                 boolean isDeduct = document.getBoolean("isDeduct");
                                 int amount = document.getLong("amount").intValue();
-                                int repeat = document.getLong("repeat").intValue();
+//                                int repeat = document.getLong("repeat").intValue();
 
-                                Event event = new Event(userId, timestamp, name, isDeduct, amount, repeat);
+                                Event event = new Event(userId, timestamp, name, isDeduct, amount);
                                 eventList.add(event);
                                 adapter.notifyDataSetChanged();
                             }

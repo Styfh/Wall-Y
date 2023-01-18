@@ -203,7 +203,7 @@ public class MainActivity extends AppCompatActivity {
         newEvent.put("date", event.getEventDate());
         newEvent.put("isDeduct", event.isDeduct());
         newEvent.put("amount", event.getAmount());
-        newEvent.put("repeat", event.getRepeat());
+//        newEvent.put("repeat", event.getRepeat());
 
         db.collection("events").document()
                 .set(newEvent)
@@ -238,7 +238,7 @@ public class MainActivity extends AppCompatActivity {
         // SPINNER INITIALIZATION
 
         Spinner balanceOption = dialogView.findViewById(R.id.balanceOption);
-        Spinner repeatOption = dialogView.findViewById(R.id.repeatEvent);
+//        Spinner repeatOption = dialogView.findViewById(R.id.repeatEvent);
 
         ArrayAdapter<CharSequence> balanceOptionAdapter = ArrayAdapter.createFromResource(this,
                 R.array.balance_option,
@@ -248,10 +248,10 @@ public class MainActivity extends AppCompatActivity {
                 android.R.layout.simple_spinner_item);
 
         balanceOptionAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        repeatOptionAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+//        repeatOptionAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 
         balanceOption.setAdapter(balanceOptionAdapter);
-        repeatOption.setAdapter(repeatOptionAdapter);
+//        repeatOption.setAdapter(repeatOptionAdapter);
 
         // AMOUNT INITIALIZATION
 
@@ -282,7 +282,7 @@ public class MainActivity extends AppCompatActivity {
                 eventName = nameField.getText().toString();
                 amount = Integer.parseInt(amountField.getText().toString());
                 String option = balanceOption.getSelectedItem().toString();
-                String frequency = repeatOption.getSelectedItem().toString();
+//                String frequency = repeatOption.getSelectedItem().toString();
 
                 Calendar calendar = Calendar.getInstance();
                 calendar.set(Calendar.DAY_OF_MONTH, day);
@@ -299,17 +299,17 @@ public class MainActivity extends AppCompatActivity {
                 else
                     isDeduct = false;
 
-                if(frequency.equals("one-time"))
-                    repeat = 0;
-                else if(frequency.equals("weekly"))
-                    repeat = 1;
-                else if(frequency.equals("monthly"))
-                    repeat = 2;
-                else if(frequency.equals("annual"))
-                    repeat = 3;
+//                if(frequency.equals("one-time"))
+//                    repeat = 0;
+//                else if(frequency.equals("weekly"))
+//                    repeat = 1;
+//                else if(frequency.equals("monthly"))
+//                    repeat = 2;
+//                else if(frequency.equals("annual"))
+//                    repeat = 3;
 
                 // Add event
-                Event event = new Event(userId, new Timestamp(calendar.getTime()), eventName, isDeduct, amount, repeat);
+                Event event = new Event(userId, new Timestamp(calendar.getTime()), eventName, isDeduct, amount);
                 pushEvent(event);
 
                 alertDialog.dismiss();
@@ -358,9 +358,9 @@ public class MainActivity extends AppCompatActivity {
                                 timestamp = document.getTimestamp("date");
                                 boolean isDeduct = document.getBoolean("isDeduct");
                                 int amount = document.getLong("amount").intValue();
-                                int repeat = document.getLong("repeat").intValue();
+//                                int repeat = document.getLong("repeat").intValue();
 
-                                Event event = new Event(userId, timestamp, name, isDeduct, amount, repeat);
+                                Event event = new Event(userId, timestamp, name, isDeduct, amount);
                                 eventList.add(event);
                                 dayEventAdapter.notifyDataSetChanged();
 

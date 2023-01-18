@@ -11,15 +11,15 @@ public class Event {
     private String eventName;
     private boolean isDeduct;
     private int amount;
-    private int repeat; // 0 = one-time, 1 = weekly, 2 = monthly, 3 = annual
+//    private int repeat; // 0 = one-time, 1 = weekly, 2 = monthly, 3 = annual
 
-    public Event(String userId, Timestamp eventDate, String eventName, boolean isDeduct, int amount, int repeat) {
+    public Event(String userId, Timestamp eventDate, String eventName, boolean isDeduct, int amount) {
         this.userId = userId;
         this.eventDate = eventDate;
         this.eventName = eventName;
         this.isDeduct = isDeduct;
         this.amount = amount;
-        this.repeat = repeat;
+//        this.repeat = repeat;
     }
 
     public int getAmount() {
@@ -62,13 +62,13 @@ public class Event {
         isDeduct = deduct;
     }
 
-    public int getRepeat() {
-        return repeat;
-    }
-
-    public void setRepeat(int repeat) {
-        this.repeat = repeat;
-    }
+//    public int getRepeat() {
+//        return repeat;
+//    }
+//
+//    public void setRepeat(int repeat) {
+//        this.repeat = repeat;
+//    }
 
     @Override
     public String toString() {
@@ -76,7 +76,7 @@ public class Event {
                 "eventDate=" + eventDate +
                 ", eventName='" + eventName + '\'' +
                 ", isDeduct=" + isDeduct +
-                ", repeat=" + repeat +
+//                ", repeat=" + repeat +
                 '}';
     }
 }
