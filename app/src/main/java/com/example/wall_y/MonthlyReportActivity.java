@@ -212,8 +212,8 @@ public class MonthlyReportActivity extends AppCompatActivity {
 
         db.collection("events")
                 .whereEqualTo("userId", uid)
-                .whereGreaterThan("date", start)
-                .whereLessThan("date", end)
+                .whereGreaterThanOrEqualTo("date", start)
+                .whereLessThanOrEqualTo("date", end)
                 .get()
                 .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                     @Override
