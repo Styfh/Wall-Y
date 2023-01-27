@@ -6,6 +6,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -16,6 +17,7 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
 import android.widget.Spinner;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -47,10 +49,12 @@ public class MonthlyReportActivity extends AppCompatActivity {
     private Date date[] = {new Date(2022, 10, 17), new Date(2022, 9, 10), new Date(2022, 8, 1)};
     private int amount[] = {100000, 50000, 30000};
     private String text[] = {"Allowance from parents", "Shopping from online shop", "Dinner at the mall"};
+    private float totalAmount = 0;
 
     ListView listView;
     private Spinner monthSpinner;
     private Spinner yearSpinner;
+    private TextView statusTxt;
 
     private ArrayList<Event> eventList;
     private EventAdapter adapter;
@@ -64,6 +68,7 @@ public class MonthlyReportActivity extends AppCompatActivity {
 
         monthSpinner = (Spinner) findViewById(R.id.month);
         yearSpinner = (Spinner) findViewById(R.id.year);
+        statusTxt = findViewById(R.id.statusTxt);
 
         ArrayAdapter<CharSequence> monthAdapter = ArrayAdapter.createFromResource(this,
                 R.array.months,
@@ -219,6 +224,7 @@ public class MonthlyReportActivity extends AppCompatActivity {
                     @Override
                     public void onComplete(@NonNull Task<QuerySnapshot> task) {
                         if(task.isSuccessful()){
+                            totalAmount = 0;
                             for(QueryDocumentSnapshot document : task.getResult()){
                                 Log.d(D_TAG, document.getData().toString());
 
@@ -230,6 +236,19 @@ public class MonthlyReportActivity extends AppCompatActivity {
                                 boolean isDeduct = document.getBoolean("isDeduct");
                                 int amount = document.getLong("amount").intValue();
 //                                int repeat = document.getLong("repeat").intValue();
+
+                                if(isDeduct) totalAmount -= amount;
+                                else totalAmount += amount;
+
+                                if(totalAmount<0) {
+                                    statusTxt.setText("Status of this month: Deficit");
+                                    statusTxt.setTextColor(Color.RED);
+                                } else if(totalAmount==0) {
+                                    statusTxt.setText("Status of this month: No Changes");
+                                } else if(totalAmount>0){
+                                    statusTxt.setText("Status of this month: Profit");
+                                    statusTxt.setTextColor(Color.GREEN);
+                                }
 
                                 Event event = new Event(userId, timestamp, name, isDeduct, amount);
                                 eventList.add(event);
